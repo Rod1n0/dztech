@@ -1,48 +1,89 @@
-import React, { useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { addToCart } from "../redux/actions";
+import React, { useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { addToCart } from '../redux/actions';
 
-const ProductCard = ({ product }) => {
-  const [showDetails, setShowDetails] = useState(false);
+const ProductCard = ({ product, onSelectProduct }) => {
   const dispatch = useDispatch();
+  const [imgError, setImgError] = useState(false);
+
   const cartItem = useSelector((state) =>
     state.cart.find((item) => item.id === product.id)
   );
+  const quantityInCart = cartItem ? cartItem.quantity : 0;
 
-  const handleAddToCart = () => {
-    dispatch(addToCart(product));
-  };
+  const hasDiscount =
+    product.originalPrice && product.originalPrice > product.price;
+  const discountPercent = hasDiscount
+    ? Math.round(
+        ((product.originalPrice - product.price) / product.originalPrice) * 100
+      )
+    : 0;
 
   return (
-    <div className="product-card">
-      <div className="image-wrapper">
-        <img src={product.image} alt={product.name} />
-        {product.discount && (
-          <span className="discount-badge">{product.discount}</span>
+    <article className="product-card">
+      <div className="product-media">
+        <div className="product-badges">
+          <span className="badge-category">{product.category}</span>
+          {hasDiscount && (
+            <span className="badge-discount">-{discountPercent}%</span>
+          )}
+        </div>
+
+        {!imgError ? (
+          <img
+            src={product.image}
+            alt={product.name}
+            className="product-image"
+            loading="lazy"
+            onError={() => setImgError(true)}
+          />
+        ) : (
+          <div className="product-image-fallback">
+            <span>{product.category}</span>
+          </div>
         )}
       </div>
 
-      <div className="product-info">
-        <span className="category-tag">{product.category}</span>
-        <h3>{product.name}</h3>
-        <p className="price">{product.price.toLocaleString()} DZD</p>
+      <div className="product-body">
+        <h3 className="product-title">{product.name}</h3>
+        <p className="product-specs">{product.specs}</p>
 
-        <button
-          className="details-toggle"
-          onClick={() => setShowDetails(!showDetails)}
-        >
-          {showDetails ? "Hide Details ▲" : "View Details ▼"}
-        </button>
+        <div className="product-footer">
+          <div className="price-group">
+            <span className="price-current">
+              {product.price.toLocaleString('fr-DZ')}{' '}
+              <small className="currency-code">DZD</small>
+            </span>
+            {hasDiscount && (
+              <span className="price-original">
+                {product.originalPrice.toLocaleString('fr-DZ')} DZD
+              </span>
+            )}
+          </div>
 
-        {showDetails && <p className="description">{product.description}</p>}
-
-        <button className="add-btn" onClick={handleAddToCart}>
-          {cartItem
-            ? `In Cart (${cartItem.quantity}) — Add More`
-            : "Add to Cart"}
-        </button>
+          <div className="card-actions">
+            {onSelectProduct && (
+              <button
+                type="button"
+                className="btn-secondary"
+                onClick={() => onSelectProduct(product)}
+              >
+                Details
+              </button>
+            )}
+            <button
+              type="button"
+              className="btn-primary"
+              onClick={() => dispatch(addToCart(product))}
+            >
+              {quantityInCart > 0
+                ? `Add (+${quantityInCart} in cart)`
+                : 'Add to Cart'}
+            </button>
+          </div>
+        </div>
       </div>
-    </div>
+    </article>
   );
 };
 

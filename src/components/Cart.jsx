@@ -1,89 +1,180 @@
-import React from "react";
-import { useSelector, useDispatch } from "react-redux";
+import React, { useState } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
 import {
   removeFromCart,
   updateQuantity,
   clearCart,
-} from "../redux/actions";
+} from '../redux/actions';
 
-const Cart = () => {
+const Cart = ({ onContinueShopping }) => {
   const cart = useSelector((state) => state.cart);
   const dispatch = useDispatch();
+  const [orderCompleted, setOrderCompleted] = useState(false);
 
-  const totalPrice = cart.reduce(
-    (total, item) => total + item.price * item.quantity,
+  const subtotal = cart.reduce(
+    (sum, item) => sum + item.price * item.quantity,
     0
   );
+  const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
 
-  if (cart.length === 0) {
+  const handleCheckout = () => {
+    setOrderCompleted(true);
+    dispatch(clearCart());
+  };
+
+  if (orderCompleted) {
     return (
-      <div className="cart-container empty-cart">
-        <h2>Your Shopping Cart is Empty 🛒</h2>
-        <p>Browse the catalog and add some tech gear to your cart!</p>
-      </div>
+      <section className="cart-section">
+        <div className="empty-state">
+          <span className="status-pill">Order Confirmed</span>
+          <h2>Thank you for your order</h2>
+          <p>
+            Your order has been placed and is being prepared for dispatch.
+          </p>
+          <button
+            type="button"
+            className="btn-primary"
+            onClick={() => {
+              setOrderCompleted(false);
+              if (onContinueShopping) onContinueShopping();
+            }}
+          >
+            Back to Store
+          </button>
+        </div>
+      </section>
     );
   }
 
   return (
-    <div className="cart-container">
+    <section className="cart-section">
       <div className="cart-header">
-        <h2>Your Shopping Cart</h2>
-        <button className="clear-btn" onClick={() => dispatch(clearCart())}>
-          Clear Cart
-        </button>
-      </div>
+        <div>
+          <h1 className="section-title">Shopping Cart</h1>
+          <p className="section-subtitle">
+            {totalItems === 0
+              ? 'No items currently in your cart.'
+              : `${totalItems} ${totalItems === 1 ? 'item' : 'items'} in your cart.`}
+          </p>
+        </div>
 
-      <div className="cart-items">
-        {cart.map((item) => (
-          <div key={item.id} className="cart-item">
-            <img src={item.image} alt={item.name} className="cart-item-img" />
-            <div className="cart-item-info">
-              <h4>{item.name}</h4>
-              <p>{item.price.toLocaleString()} DZD each</p>
-            </div>
-
-            <div className="quantity-controls">
+        {cart.length > 0 && (
+          <div className="cart-header-actions">
+            {onContinueShopping && (
               <button
-                onClick={() =>
-                  dispatch(updateQuantity(item.id, item.quantity - 1))
-                }
+                type="button"
+                className="btn-secondary"
+                onClick={onContinueShopping}
               >
-                -
+                Continue Shopping
               </button>
-              <span>{item.quantity}</span>
-              <button
-                onClick={() =>
-                  dispatch(updateQuantity(item.id, item.quantity + 1))
-                }
-              >
-                +
-              </button>
-            </div>
-
-            <p className="item-subtotal">
-              {(item.price * item.quantity).toLocaleString()} DZD
-            </p>
-
+            )}
             <button
-              className="remove-btn"
-              onClick={() => dispatch(removeFromCart(item.id))}
+              type="button"
+              className="btn-danger-outline"
+              onClick={() => dispatch(clearCart())}
             >
-              ✕ Remove
+              Clear Cart
             </button>
           </div>
-        ))}
+        )}
       </div>
 
-      <div className="cart-summary">
-        <h3>Total: {totalPrice.toLocaleString()} DZD</h3>
-        <button
-          className="checkout-btn"
-          onClick={() => alert("Order simulated! (Frontend Lab Demo)")}
-        >
-          Proceed to Checkout
-        </button>
-      </div>
-    </div>
+      {cart.length === 0 ? (
+        <div className="empty-state">
+          <h3>Your cart is empty</h3>
+          <p>Explore the catalog and add products to get started.</p>
+          {onContinueShopping && (
+            <button
+              type="button"
+              className="btn-primary"
+              onClick={onContinueShopping}
+            >
+              Browse Products
+            </button>
+          )}
+        </div>
+      ) : (
+        <div className="cart-layout">
+          <div className="cart-list">
+            {cart.map((item) => (
+              <div key={item.id} className="cart-item">
+                <div className="cart-item-details">
+                  <span className="cart-item-category">{item.category}</span>
+                  <h3 className="cart-item-name">{item.name}</h3>
+                  <span className="cart-item-unit-price">
+                    {item.price.toLocaleString('fr-DZ')} DZD each
+                  </span>
+                </div>
+
+                <div className="cart-item-controls">
+                  <div className="qty-control">
+                    <button
+                      type="button"
+                      className="qty-btn"
+                      onClick={() =>
+                        dispatch(updateQuantity(item.id, item.quantity - 1))
+                      }
+                      aria-label="Decrease quantity"
+                    >
+                      -
+                    </button>
+                    <span className="qty-value">{item.quantity}</span>
+                    <button
+                      type="button"
+                      className="qty-btn"
+                      onClick={() =>
+                        dispatch(updateQuantity(item.id, item.quantity + 1))
+                      }
+                      aria-label="Increase quantity"
+                    >
+                      +
+                    </button>
+                  </div>
+
+                  <div className="cart-item-total">
+                    {(item.price * item.quantity).toLocaleString('fr-DZ')} DZD
+                  </div>
+
+                  <button
+                    type="button"
+                    className="btn-remove"
+                    onClick={() => dispatch(removeFromCart(item.id))}
+                  >
+                    Remove
+                  </button>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          <aside className="cart-summary">
+            <h2 className="summary-title">Order Summary</h2>
+            <div className="summary-row">
+              <span>Items ({totalItems})</span>
+              <span>{subtotal.toLocaleString('fr-DZ')} DZD</span>
+            </div>
+            <div className="summary-row">
+              <span>Shipping</span>
+              <span>Free</span>
+            </div>
+            <div className="summary-divider" />
+            <div className="summary-row summary-total">
+              <span>Total</span>
+              <span>{subtotal.toLocaleString('fr-DZ')} DZD</span>
+            </div>
+
+            <button
+              type="button"
+              className="btn-primary btn-block"
+              onClick={handleCheckout}
+            >
+              Checkout
+            </button>
+          </aside>
+        </div>
+      )}
+    </section>
   );
 };
 
