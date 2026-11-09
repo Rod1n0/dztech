@@ -6,8 +6,11 @@ const ProductCard = ({ product, onSelectProduct }) => {
   const dispatch = useDispatch();
   const [imgError, setImgError] = useState(false);
 
+  const productId = product.id || product._id;
+  const imageSource = product.imageUrl || product.image;
+
   const cartItem = useSelector((state) =>
-    state.cart.find((item) => item.id === product.id)
+    state.cart.find((item) => (item.id || item._id) === productId)
   );
   const quantityInCart = cartItem ? cartItem.quantity : 0;
 
@@ -29,9 +32,9 @@ const ProductCard = ({ product, onSelectProduct }) => {
           )}
         </div>
 
-        {!imgError ? (
+        {!imgError && imageSource ? (
           <img
-            src={product.image}
+            src={imageSource}
             alt={product.name}
             className="product-image"
             loading="lazy"
@@ -46,17 +49,19 @@ const ProductCard = ({ product, onSelectProduct }) => {
 
       <div className="product-body">
         <h3 className="product-title">{product.name}</h3>
-        <p className="product-specs">{product.specs}</p>
+        <p className="product-specs">
+          {product.specs || product.description}
+        </p>
 
         <div className="product-footer">
           <div className="price-group">
             <span className="price-current">
-              {product.price.toLocaleString('fr-DZ')}{' '}
+              {Number(product.price).toLocaleString('fr-DZ')}{' '}
               <small className="currency-code">DZD</small>
             </span>
             {hasDiscount && (
               <span className="price-original">
-                {product.originalPrice.toLocaleString('fr-DZ')} DZD
+                {Number(product.originalPrice).toLocaleString('fr-DZ')} DZD
               </span>
             )}
           </div>
@@ -74,7 +79,15 @@ const ProductCard = ({ product, onSelectProduct }) => {
             <button
               type="button"
               className="btn-primary"
-              onClick={() => dispatch(addToCart(product))}
+              onClick={() =>
+                dispatch(
+                  addToCart({
+                    ...product,
+                    id: productId,
+                    image: imageSource,
+                  })
+                )
+              }
             >
               {quantityInCart > 0
                 ? `Add (+${quantityInCart} in cart)`

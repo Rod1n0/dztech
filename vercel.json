@@ -1,0 +1,12 @@
+{
+  "rewrites": [
+    {
+      "source": "/api/(.*)",
+      "destination": "/api/index.js"
+    },
+    {
+      "source": "/.well-known/openid-configuration",
+      "destination": "/api/index.js"
+    }
+  ]
+}

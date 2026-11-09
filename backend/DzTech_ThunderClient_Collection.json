@@ -1,0 +1,249 @@
+{
+  "client": "Thunder Client",
+  "collectionName": "DzTech E-Commerce API (TD-TP 3)",
+  "dateExported": "2026-11-08T21:38:00.000Z",
+  "version": "1.1",
+  "folders": [
+    {
+      "_id": "folder-auth",
+      "name": "1. Authentication",
+      "containerId": "",
+      "created": "2026-11-08T21:38:00.000Z",
+      "sortNum": 10000
+    },
+    {
+      "_id": "folder-products",
+      "name": "2. Product Management",
+      "containerId": "",
+      "created": "2026-11-08T21:38:00.000Z",
+      "sortNum": 20000
+    },
+    {
+      "_id": "folder-security",
+      "name": "3. Security & Error Handling",
+      "containerId": "",
+      "created": "2026-11-08T21:38:00.000Z",
+      "sortNum": 30000
+    },
+    {
+      "_id": "folder-oauth2",
+      "name": "4. OAuth 2.0 & Rate Limiting",
+      "containerId": "",
+      "created": "2026-11-08T21:38:00.000Z",
+      "sortNum": 40000
+    }
+  ],
+  "requests": [
+    {
+      "_id": "req-register",
+      "colId": "dztech-tp3",
+      "containerId": "folder-auth",
+      "name": "1.1 Register New User (201 Created)",
+      "url": "http://localhost:3000/api/auth/register",
+      "method": "POST",
+      "sortNum": 10000,
+      "headers": [{ "name": "Content-Type", "value": "application/json" }],
+      "body": {
+        "type": "json",
+        "raw": "{\n  \"name\": \"BOUDISSA Farouk Radouane\",\n  \"email\": \"farouk.boudissa@ensta.edu.dz\",\n  \"password\": \"SecurePass2026!\"\n}"
+      }
+    },
+    {
+      "_id": "req-register-dup",
+      "colId": "dztech-tp3",
+      "containerId": "folder-auth",
+      "name": "1.2 Register Existing Email (409 Conflict)",
+      "url": "http://localhost:3000/api/auth/register",
+      "method": "POST",
+      "sortNum": 20000,
+      "headers": [{ "name": "Content-Type", "value": "application/json" }],
+      "body": {
+        "type": "json",
+        "raw": "{\n  \"name\": \"BOUDISSA Farouk Radouane\",\n  \"email\": \"farouk.boudissa@ensta.edu.dz\",\n  \"password\": \"SecurePass2026!\"\n}"
+      }
+    },
+    {
+      "_id": "req-login-valid",
+      "colId": "dztech-tp3",
+      "containerId": "folder-auth",
+      "name": "1.3 Login with Valid Credentials (200 OK + JWT)",
+      "url": "http://localhost:3000/api/auth/login",
+      "method": "POST",
+      "sortNum": 30000,
+      "headers": [{ "name": "Content-Type", "value": "application/json" }],
+      "body": {
+        "type": "json",
+        "raw": "{\n  \"email\": \"farouk.boudissa@ensta.edu.dz\",\n  \"password\": \"SecurePass2026!\"\n}"
+      }
+    },
+    {
+      "_id": "req-login-invalid",
+      "colId": "dztech-tp3",
+      "containerId": "folder-auth",
+      "name": "1.4 Login with Invalid Credentials (401 Unauthorized)",
+      "url": "http://localhost:3000/api/auth/login",
+      "method": "POST",
+      "sortNum": 40000,
+      "headers": [{ "name": "Content-Type", "value": "application/json" }],
+      "body": {
+        "type": "json",
+        "raw": "{\n  \"email\": \"farouk.boudissa@ensta.edu.dz\",\n  \"password\": \"WrongPassword123\"\n}"
+      }
+    },
+    {
+      "_id": "req-products-all",
+      "colId": "dztech-tp3",
+      "containerId": "folder-products",
+      "name": "2.1 Retrieve Product List (200 OK)",
+      "url": "http://localhost:3000/api/products",
+      "method": "GET",
+      "sortNum": 50000,
+      "headers": []
+    },
+    {
+      "_id": "req-products-single",
+      "colId": "dztech-tp3",
+      "containerId": "folder-products",
+      "name": "2.2 Retrieve Single Product (200 OK)",
+      "url": "http://localhost:3000/api/products/65f000000000000000000001",
+      "method": "GET",
+      "sortNum": 60000,
+      "headers": []
+    },
+    {
+      "_id": "req-products-create",
+      "colId": "dztech-tp3",
+      "containerId": "folder-products",
+      "name": "2.3 Create Product with Valid Token (201 Created)",
+      "url": "http://localhost:3000/api/products",
+      "method": "POST",
+      "sortNum": 70000,
+      "headers": [{ "name": "Content-Type", "value": "application/json" }],
+      "auth": {
+        "type": "bearer",
+        "bearer": "{{jwt_token}}"
+      },
+      "body": {
+        "type": "json",
+        "raw": "{\n  \"name\": \"Apple MacBook Pro 14 M3 Pro\",\n  \"description\": \"14-inch Liquid Retina XDR laptop with Apple M3 Pro chip.\",\n  \"price\": 385000,\n  \"category\": \"Laptops\",\n  \"specs\": \"M3 Pro · 18GB Unified · 512GB NVMe\",\n  \"imageUrl\": \"https://images.unsplash.com/photo-1517336714731-489689fd1ca8?auto=format&fit=crop&w=800&q=80\",\n  \"stock\": 10\n}"
+      }
+    },
+    {
+      "_id": "req-products-update",
+      "colId": "dztech-tp3",
+      "containerId": "folder-products",
+      "name": "2.4 Update Product with Valid Token (200 OK)",
+      "url": "http://localhost:3000/api/products/65f000000000000000000001",
+      "method": "PUT",
+      "sortNum": 80000,
+      "headers": [{ "name": "Content-Type", "value": "application/json" }],
+      "auth": {
+        "type": "bearer",
+        "bearer": "{{jwt_token}}"
+      },
+      "body": {
+        "type": "json",
+        "raw": "{\n  \"price\": 229000,\n  \"stock\": 15\n}"
+      }
+    },
+    {
+      "_id": "req-products-delete",
+      "colId": "dztech-tp3",
+      "containerId": "folder-products",
+      "name": "2.5 Delete Product with Valid Token (200 OK)",
+      "url": "http://localhost:3000/api/products/{{created_product_id}}",
+      "method": "DELETE",
+      "sortNum": 90000,
+      "headers": [],
+      "auth": {
+        "type": "bearer",
+        "bearer": "{{jwt_token}}"
+      }
+    },
+    {
+      "_id": "req-sec-notoken",
+      "colId": "dztech-tp3",
+      "containerId": "folder-security",
+      "name": "3.1 Protected Request Without Token (401 Unauthorized)",
+      "url": "http://localhost:3000/api/products",
+      "method": "POST",
+      "sortNum": 100000,
+      "headers": [{ "name": "Content-Type", "value": "application/json" }],
+      "body": {
+        "type": "json",
+        "raw": "{\n  \"name\": \"No Token Item\",\n  \"description\": \"Testing missing token\",\n  \"price\": 10000,\n  \"category\": \"Peripherals\",\n  \"imageUrl\": \"https://example.com/img.jpg\",\n  \"stock\": 5\n}"
+      }
+    },
+    {
+      "_id": "req-sec-badtoken",
+      "colId": "dztech-tp3",
+      "containerId": "folder-security",
+      "name": "3.2 Protected Request With Invalid Token (401 Unauthorized)",
+      "url": "http://localhost:3000/api/products",
+      "method": "POST",
+      "sortNum": 110000,
+      "headers": [
+        { "name": "Content-Type", "value": "application/json" },
+        { "name": "Authorization", "value": "Bearer invalid_token_12345" }
+      ],
+      "body": {
+        "type": "json",
+        "raw": "{\n  \"name\": \"Invalid Token Item\",\n  \"description\": \"Testing invalid token\",\n  \"price\": 10000,\n  \"category\": \"Peripherals\",\n  \"imageUrl\": \"https://example.com/img.jpg\",\n  \"stock\": 5\n}"
+      }
+    },
+    {
+      "_id": "req-sec-badid",
+      "colId": "dztech-tp3",
+      "containerId": "folder-security",
+      "name": "3.3 Invalid Product ID (400 Bad Request)",
+      "url": "http://localhost:3000/api/products/invalid-id-format",
+      "method": "GET",
+      "sortNum": 120000,
+      "headers": []
+    },
+    {
+      "_id": "req-sec-badbody",
+      "colId": "dztech-tp3",
+      "containerId": "folder-security",
+      "name": "3.4 Missing Product Fields (400 Bad Request)",
+      "url": "http://localhost:3000/api/products",
+      "method": "POST",
+      "sortNum": 130000,
+      "headers": [{ "name": "Content-Type", "value": "application/json" }],
+      "auth": {
+        "type": "bearer",
+        "bearer": "{{jwt_token}}"
+      },
+      "body": {
+        "type": "json",
+        "raw": "{\n  \"name\": \"Incomplete Product\"\n}"
+      }
+    },
+    {
+      "_id": "req-oauth2-protected",
+      "colId": "dztech-tp3",
+      "containerId": "folder-oauth2",
+      "name": "4.1 Protected Product Request with OAuth 2.0 + PKCE",
+      "url": "http://localhost:3000/api/products",
+      "method": "POST",
+      "sortNum": 140000,
+      "headers": [{ "name": "Content-Type", "value": "application/json" }],
+      "auth": {
+        "type": "oauth2",
+        "oauth2": {
+          "grantType": "authorization_code",
+          "authUrl": "http://localhost:3000/api/oauth/authorize",
+          "tokenUrl": "http://localhost:3000/api/oauth/token",
+          "clientId": "dztech-thunder-client",
+          "scope": "openid profile email products:write",
+          "pkce": true,
+          "challengeMethod": "S256"
+        }
+      },
+      "body": {
+        "type": "json",
+        "raw": "{\n  \"name\": \"OAuth2 Created Monitor\",\n  \"description\": \"Created using an OAuth 2.0 PKCE Bearer Access Token.\",\n  \"price\": 89000,\n  \"category\": \"Monitors\",\n  \"imageUrl\": \"https://images.unsplash.com/photo-1527443224154-c4a3942d3acf?auto=format&fit=crop&w=800&q=80\",\n  \"stock\": 6\n}"
+      }
+    }
+  ]
+}

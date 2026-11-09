@@ -1,7 +1,15 @@
 import React from 'react';
 import { useSelector } from 'react-redux';
 
-const Navbar = ({ activeTab, setActiveTab, theme, onToggleTheme }) => {
+const Navbar = ({
+  activeTab,
+  setActiveTab,
+  theme,
+  onToggleTheme,
+  user,
+  onOpenAuth,
+  onLogout,
+}) => {
   const cart = useSelector((state) => state.cart);
 
   const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
@@ -60,6 +68,29 @@ const Navbar = ({ activeTab, setActiveTab, theme, onToggleTheme }) => {
               </span>
             )}
           </button>
+
+          {user ? (
+            <div className="user-Menu">
+              <span className="user-pill" title={user.email}>
+                {user.name}
+              </span>
+              <button
+                type="button"
+                className="theme-toggle-btn"
+                onClick={onLogout}
+              >
+                Sign Out
+              </button>
+            </div>
+          ) : (
+            <button
+              type="button"
+              className="theme-toggle-btn"
+              onClick={onOpenAuth}
+            >
+              Sign In
+            </button>
+          )}
 
           <button
             type="button"
