@@ -67,7 +67,7 @@ const AuthModal = ({ onClose, onAuthSuccess }) => {
                 type="text"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
-                placeholder="e.g. Farouk Boudissa"
+                placeholder="e.g. Max Verstappen"
                 required
               />
             </div>
