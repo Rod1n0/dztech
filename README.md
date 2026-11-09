@@ -38,6 +38,8 @@
 
 ```text
 dztech/
+├── api/
+│   └── index.js                  # Vercel Serverless Function entry point
 ├── backend/
 │   ├── config/
 │   │   └── db.js                 # MongoDB Mongoose connection & auto-seeding
@@ -59,14 +61,18 @@ dztech/
 │   ├── seed/
 │   │   ├── sampleProducts.js     # Initial sample hardware catalog
 │   │   └── seedProducts.js       # Database seeding script
+│   ├── DzTech_Postman_Collection.json       # Ready-to-import Postman v2.1 collection
+│   ├── DzTech_ThunderClient_Collection.json # Ready-to-import Thunder Client collection
 │   ├── .env.example              # Environment variable template
-│   ├── package.json              # Backend package configuration
-│   └── server.js                 # Express application entry point
+│   ├── server.js                 # Express application entry point
+│   ├── start-all.js              # Full-stack concurrent launcher (Backend + Frontend)
+│   └── test-api.js               # Automated 15-check REST API verification suite
 ├── src/                          # React + Redux frontend source
 │   ├── components/               # Navbar, ProductList, ProductCard, Cart, AuthModal, ProductFormModal
 │   ├── redux/                    # Redux store, actions, and cart reducer
 │   └── services/api.js           # REST API client with JWT Bearer header injection
 ├── .env.example                  # Root environment variable template
+├── vercel.json                   # Vercel full-stack build & API routing configuration
 └── package.json                  # Project scripts & dependencies
 ```
 
@@ -179,14 +185,37 @@ npm install
 npm run seed
 ```
 
-### 3. Start the Backend REST API Server
+### 3. Run Both Backend and Frontend Together (Single Terminal)
 ```bash
-npm run server
+npm run dev:full
 ```
-The API will start on `http://localhost:3000`.
+- **Backend REST API:** `http://localhost:3000`
+- **React Frontend:** `http://localhost:5173`
 
-### 4. Start the React Frontend (in a second terminal)
+### 4. Or Run Backend and Frontend in Separate Terminals
 ```bash
+# Terminal 1 — Start Express REST API on http://localhost:3000
+npm run server
+
+# Terminal 2 — Start Vite React Frontend on http://localhost:5173
 npm run dev
 ```
-The React application will start on `http://localhost:5173` and automatically connect to `http://localhost:3000/api`.
+
+### 5. API Testing (Postman, Thunder Client & Automated Suite)
+- **Automated Verification Suite (15 checks):**
+  ```bash
+  npm run test:api
+  ```
+- **Postman Collection:** Import `backend/DzTech_Postman_Collection.json` into Postman.
+- **Thunder Client Collection:** Import `backend/DzTech_ThunderClient_Collection.json` into Thunder Client in VS Code.
+
+---
+
+## 10. Cloud Deployment (Vercel + MongoDB Atlas)
+
+The project is pre-configured via `vercel.json` and `api/index.js` to deploy both the Vite React frontend and the Express REST API on **Vercel**:
+1. Import the GitHub repository on Vercel (Framework Preset: **Vite**).
+2. In **Settings -> Environment Variables**, configure:
+   - `MONGODB_URI`: Your MongoDB Atlas connection string.
+   - `JWT_SECRET`: Your production secret key.
+3. Deploy — `/api/*` and `/.well-known/openid-configuration` requests are routed to the Express backend while `/` serves the React frontend.
