@@ -1,4 +1,4 @@
-# DzTech Store — Full-Stack E-Commerce Application (TD-TP 3)
+# DzTech Store: Full-Stack E-Commerce Application (TD-TP 3)
 
 ## 1. Student Information
 - **Student Name:** BOUDISSA Farouk Radouane
